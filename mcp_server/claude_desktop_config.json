@@ -1,0 +1,17 @@
+{
+  "_instructions": "Add the 'invoice-agent' entry inside the 'mcpServers' object in your Claude Desktop config file. Update the paths below to match where you cloned this repo.",
+  "_config_file_locations": {
+    "mac": "~/Library/Application Support/Claude/claude_desktop_config.json",
+    "windows": "%APPDATA%\\Claude\\claude_desktop_config.json"
+  },
+
+  "mcpServers": {
+    "invoice-agent": {
+      "command": "python",
+      "args": ["/ABSOLUTE/PATH/TO/invoice-agent-demo/mcp_server/server.py"],
+      "env": {
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/invoice-agent-demo/agent"
+      }
+    }
+  }
+}

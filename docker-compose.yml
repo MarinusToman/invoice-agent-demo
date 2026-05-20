@@ -1,0 +1,51 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - agent_network
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  model-init:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    command: pull qwen3:8b
+    networks:
+      - agent_network
+    restart: "no"
+
+  invoice-agent:
+    build: ./agent
+    restart: unless-stopped
+    volumes:
+      - ./credentials:/app/credentials:ro    # Read-only — agent cannot modify credentials
+      - agent_logs:/app/logs
+    env_file: .env
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      model-init:
+        condition: service_completed_successfully
+    networks:
+      - agent_network
+
+networks:
+  agent_network:
+    driver: bridge    # Containers talk to each other and the internet, not the host filesystem
+
+volumes:
+  ollama_data:
+  agent_logs:

@@ -1,0 +1,39 @@
+{
+  "display_information": {
+    "name": "Invoice Agent",
+    "description": "AI invoice processor — analyzes invoices and asks for approval before acting",
+    "background_color": "#1a1a2e"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "Invoice Agent",
+      "always_online": true
+    },
+    "shortcuts": [
+      {
+        "name": "Process Invoices",
+        "type": "global",
+        "callback_id": "process_invoices",
+        "description": "Check Gmail for new invoices now"
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "chat:write",
+        "channels:history",
+        "channels:read",
+        "reactions:write",
+        "im:write"
+      ]
+    }
+  },
+  "settings": {
+    "interactivity": {
+      "is_enabled": true
+    },
+    "socket_mode_enabled": true,
+    "token_rotation_enabled": false
+  }
+}
