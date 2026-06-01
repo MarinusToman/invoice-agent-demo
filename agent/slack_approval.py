@@ -1,4 +1,5 @@
 import os
+import re
 import threading
 from datetime import datetime, timezone
 
@@ -62,13 +63,6 @@ def _build_approval_blocks(invoice_analysis: dict, proposed_actions: list) -> li
             {
                 "type": "section",
                 "text": {"type": "mrkdwn", "text": f"• {action['description']}"},
-                "accessory": {
-                    "type": "button",
-                    "text": {"type": "plain_text", "text": "✅ Approve"},
-                    "style": "primary",
-                    "action_id": f"approve_{action['id']}",
-                    "value": action["id"],
-                },
             }
         )
         blocks.append(
@@ -77,10 +71,17 @@ def _build_approval_blocks(invoice_analysis: dict, proposed_actions: list) -> li
                 "elements": [
                     {
                         "type": "button",
+                        "text": {"type": "plain_text", "text": "✅ Approve"},
+                        "style": "primary",
+                        "action_id": f"approve_{action['id']}",
+                        "value": action["id"],
+                    },
+                    {
+                        "type": "button",
                         "text": {"type": "plain_text", "text": "❌ Skip"},
                         "action_id": f"skip_{action['id']}",
                         "value": action["id"],
-                    }
+                    },
                 ],
             }
         )
@@ -152,21 +153,15 @@ def _update_button(body, action_id: str, approved: bool):
     label = "✅ Approved" if approved else "❌ Skipped"
     blocks = body["message"]["blocks"]
 
-    # Find and neutralize the buttons for this action
     for block in blocks:
-        if block.get("type") == "section":
-            acc = block.get("accessory", {})
-            if acc.get("action_id") == f"approve_{action_id}":
-                block["accessory"] = {
+        if block.get("type") == "actions":
+            ids = {el.get("action_id") for el in block.get("elements", [])}
+            if f"approve_{action_id}" in ids or f"skip_{action_id}" in ids:
+                block["elements"] = [{
                     "type": "button",
                     "text": {"type": "plain_text", "text": label},
                     "action_id": f"done_{action_id}",
-                }
-        if block.get("type") == "actions":
-            for el in block.get("elements", []):
-                if el.get("action_id") in (f"approve_{action_id}", f"skip_{action_id}", f"done_{action_id}"):
-                    el["text"] = {"type": "plain_text", "text": label}
-                    el["action_id"] = f"done_{action_id}"
+                }]
 
     app.client.chat_update(
         channel=body["container"]["channel_id"],
@@ -178,7 +173,7 @@ def _update_button(body, action_id: str, approved: bool):
 
 # ── Action handlers ───────────────────────────────────────────────────────────
 
-@app.action({"action_id": lambda x: x.startswith("approve_")})
+@app.action(re.compile(r"^approve_"))
 def handle_approve(ack, body, action):
     ack()
     action_id = action["action_id"].replace("approve_", "")
@@ -189,7 +184,7 @@ def handle_approve(ack, body, action):
     _update_button(body, action_id, approved=True)
 
 
-@app.action({"action_id": lambda x: x.startswith("skip_")})
+@app.action(re.compile(r"^skip_"))
 def handle_skip(ack, body, action):
     ack()
     action_id = action["action_id"].replace("skip_", "")
@@ -200,7 +195,7 @@ def handle_skip(ack, body, action):
     _update_button(body, action_id, approved=False)
 
 
-@app.action({"action_id": lambda x: x.startswith("done_")})
+@app.action(re.compile(r"^done_"))
 def handle_done(ack, body, action):
     ack()  # Already decided — ignore re-clicks
 
@@ -225,6 +220,16 @@ def on_demand(message, say, client):
 def handle_shortcut(ack, client):
     ack()
     _trigger_on_demand(client)
+
+
+# ── Status messages ───────────────────────────────────────────────────────────
+
+def post_status_message(text: str):
+    """Post a plain text status update to the channel."""
+    app.client.chat_postMessage(
+        channel=os.environ["SLACK_CHANNEL_ID"],
+        text=text,
+    )
 
 
 # ── Confirmation message ──────────────────────────────────────────────────────

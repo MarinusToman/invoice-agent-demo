@@ -27,6 +27,7 @@ from auth import get_services
 from slack_approval import (
     post_approval_request,
     post_completion_summary,
+    post_status_message,
     register_on_demand_callback,
     start_socket_mode,
     wait_for_all_decisions,
@@ -50,7 +51,7 @@ def load_config() -> dict:
         "URGENT_DAYS": int(os.environ.get("URGENT_DAYS", 7)),
         "POLL_WEEKDAY": int(os.environ.get("POLL_WEEKDAY", 0)),
         "POLL_HOUR": int(os.environ.get("POLL_HOUR", 9)),
-        "OLLAMA_MODEL": os.environ.get("OLLAMA_MODEL", "qwen3:8b"),
+        "OLLAMA_MODEL": os.environ.get("OLLAMA_MODEL", "qwen2.5-coder:7b"),
     }
 
 
@@ -130,6 +131,7 @@ def poll_and_process(services: dict, config: dict):
 
     if not emails:
         print("No unread invoice emails found.")
+        post_status_message("No new invoice emails found. Nothing to process.")
         return
 
     print(f"Found {len(emails)} invoice email(s).")
@@ -173,11 +175,14 @@ def poll_and_process(services: dict, config: dict):
 
 
 def _mark_read(gmail_service, message_id: str):
-    gmail_service.users().messages().modify(
-        userId="me",
-        id=message_id,
-        body={"removeLabelIds": ["UNREAD"]},
-    ).execute()
+    try:
+        gmail_service.users().messages().modify(
+            userId="me",
+            id=message_id,
+            body={"removeLabelIds": ["UNREAD"]},
+        ).execute()
+    except Exception as e:
+        print(f"[Warning] Could not mark email as read: {e}")
 
 
 def _extract_analysis_fields(analysis_text: str) -> dict:

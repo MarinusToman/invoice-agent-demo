@@ -46,7 +46,7 @@ Gmail  →  AI Agent (local)  →  Slack approval  →  Google Sheets
 - **Google account** with access to Google Sheets (same Google account as above is fine)
 - **Slack workspace** — free tier is sufficient; use an existing workspace or create one at [slack.com](https://slack.com)
 - **Python 3.10+** — only needed for the optional MCP section and the one-time Google auth setup
-- **16GB RAM recommended** (8GB minimum) — the qwen3:8b model needs about 5-6GB
+- **16GB RAM recommended** (8GB minimum) — the qwen2.5-coder:7b model needs about 4-5GB
 
 **Cost: $0.** All services used here are free at normal business volumes.
 
@@ -93,6 +93,7 @@ You'll be taken to the app's settings page. You'll see a left-side menu with man
 - Click **"Save Changes"** at the bottom of the page
 
 **Step 4 — Enable Event Subscriptions** (this allows the bot to receive messages you type in the channel):
+
 - In the left sidebar, under **"Features"**, click **"Event Subscriptions"**
 - Click the toggle labelled **"Enable Events"** to turn it ON (turns green)
 - Scroll down to the section called **"Subscribe to Bot Events"**
@@ -243,7 +244,7 @@ You need to authorize the agent to read your Gmail and write to one Google Sheet
 **Step 5.** Copy the spreadsheet ID from the URL bar. The URL looks like:
 `https://docs.google.com/spreadsheets/d/`**`1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms`**`/edit`
 
-The bold part is your Spreadsheet ID.
+The bold part is your Spreadsheet ID. Paste it into notepad, we'll use it soon.
 
 ---
 
@@ -251,13 +252,13 @@ The bold part is your Spreadsheet ID.
 
 **Step 1 — Download the project:**
 
-- Open your web browser and go to this project's GitHub page
+- Open your web browser and go to this project's GitHub page:
 - Click the green **"Code"** button near the top-right
 - Click **"Download ZIP"**
 - When the download finishes, open **File Explorer** (Windows key + E) and go to your Downloads folder
 - Right-click the file named `invoice-agent-demo-main.zip` (or similar) → **"Extract All..."**
 - In the window that appears, click **"Browse"** and choose somewhere easy to find, like your Desktop. Then click **"Extract"**
-- A folder called `invoice-agent-demo-main` will appear on your Desktop — this is your project folder. You can rename it to `invoice-agent-demo` if you like (right-click → Rename)
+- A folder called `invoice-agent-demo-main` will appear on your Desktop — this is your project folder. You can rename it to `invoice-agent` if you like (right-click → Rename)
 
 **Step 2 — Create your config file:**
 
@@ -296,25 +297,12 @@ The bold part is your Spreadsheet ID.
 
 **How to open a Command Prompt (you'll need this for Sections 5 and 6):**
 
-> A "Command Prompt" (also called a "terminal") is a black window where you type commands. It sounds intimidating but you're just going to type a few short lines.
->
-> 1. Press the **Windows key** on your keyboard
-> 2. Type: **cmd**
-> 3. Click **"Command Prompt"** in the results — a black window opens
->
-> Before running any commands, you need to navigate to your project folder. Type the command below and press Enter, replacing `YourName` with your Windows username and adjusting the path to wherever you extracted the project:
->
-> ```
-> cd C:\Users\YourName\Desktop\invoice-agent-demo
-> ```
->
-> If the folder path contains spaces, wrap it in quotes:
->
-> ```
-> cd "C:\Users\Your Name\Desktop\invoice-agent-demo"
-> ```
->
-> You'll know it worked when the black window shows the project folder path before the cursor.
+A "Command Prompt" (also called a "terminal") is a black window where you type commands. It sounds intimidating but you're just going to type a few short lines.
+
+> 1. Ensure you are still in the project folder
+> 2. Click a blank spot on the **Address bar** at the top of the screen
+> 3. Type: **cmd**, press **Enter**
+>    You'll know it worked when the black window shows the project folder path before the cursor.
 
 **Step 1 — Make sure Docker Desktop is running.**
 Open Docker Desktop from the Start menu. Wait until the whale icon in the taskbar shows a green light (this means Docker is ready). If it shows an error, try restarting Docker Desktop.
@@ -327,20 +315,12 @@ docker compose up -d
 ```
 
 This starts three things automatically:
+
 1. **Ollama** — the local AI engine
-2. **Model download** — downloads the `qwen3:8b` AI model (~4.7 GB, one-time only)
+2. **Model download** — downloads the `qwen2.5-coder:7b` AI model (~4.4 GB, one-time only)
 3. **Invoice Agent** — starts after the model is ready
 
-The first time you run this, the model download takes **5–15 minutes** depending on your internet speed. You can watch the progress by running:
-
-```
-docker compose logs -f model-init
-```
-
-Press **Ctrl+C** to stop watching the logs (the download continues in the background). The model is saved in a Docker volume and reused every time after — subsequent startups take only a few seconds.
-
-> **Lower RAM option:** If your computer has less than 8 GB of RAM, use the smaller `llama3.2` model (~2 GB) instead. Open your `.env` file in Notepad and add: `OLLAMA_MODEL=llama3.2`. Then open `docker-compose.yml` in Notepad and change `qwen3:8b` to `llama3.2` in the `model-init` section. Run `docker compose up -d --build` to apply.
-> Note: the smaller model may occasionally miss tool calls — if the agent seems unresponsive, switch back to `qwen3:8b`.
+The first time you run this, the model download takes **5–15 minutes** depending on your internet speed. The model is saved in a Docker volume and reused every time after — subsequent startups take only a few seconds.
 
 ---
 
@@ -381,14 +361,9 @@ The authorization token is saved to `credentials/token.json` inside your project
 
 ## Section 7 — Test It Live (This Is the Demo)
 
-**Prepare the test invoice:**
+**Send a test invoice:**
 
-1. Open `sample_invoice/sample_invoice.html` in your browser
-2. File → Print (or Ctrl/Cmd+P) → Save as PDF
-3. Name the file `invoice.pdf`
-
-**Send the test invoice:**
-
+- There are example invoices in the `sample_invoice/` directory
 - Send an email to your test Gmail account with `invoice.pdf` as an attachment
 - Subject can be anything (e.g. "Invoice from Acme")
 
@@ -397,7 +372,8 @@ The authorization token is saved to `credentials/token.json` inside your project
 You have two ways to trigger the agent:
 
 **Option A — Slack shortcut (easiest):**
-Click the **`/` icon** (a box with a forward slash) in the Slack message compose box → find **"Process Invoices"** in the list → click it.
+Press **`/`** → find **"Process Invoices"** in the list → click it.
+As that is a shortcut for the app we set up earlier, you can just press **`/`** and enter.
 
 > If you don't see "Process Invoices" listed, you need to add the shortcut to your app first. In your browser, go to **api.slack.com/apps** → click **Invoice Agent** → left sidebar → **Interactivity & Shortcuts** → scroll to **Shortcuts** → **Create New Shortcut** → **Global** → set the name to `Process Invoices`, the callback ID to exactly `process_invoices`, and a description → **Save Changes**. Then reinstall the app using the **Install App** page in the left sidebar.
 
@@ -413,7 +389,7 @@ The agent is already running inside Docker (started in Section 5) — either opt
 **Watch what happens:**
 
 - The bot replies in Slack: "Starting invoice check now..."
-- Within ~30 seconds, a message appears in your Slack channel with the invoice summary and action buttons
+- Within ~30 seconds (or longer depending on your hardware), a message appears in your Slack channel with the invoice summary and action buttons
 - The **approval buttons look like this:**
 
 ```
@@ -532,7 +508,7 @@ The container may not have started yet. Run `docker compose ps` to check. If Oll
 The model download may still be in progress or failed. Check with: `docker compose logs model-init`. If it failed, run `docker compose up -d` again — it will retry the download.
 
 **Agent proposes no actions / tool calls don't appear**
-qwen3:8b has strong tool-calling support but occasionally a prompt fails. Try triggering again with `process invoices` in Slack. If it consistently fails, switch to a larger model: set `OLLAMA_MODEL=llama3.1:70b` in `.env` and update `docker-compose.yml` to pull that model instead (requires more RAM).
+qwen2.5-coder:7b has strong tool-calling support but occasionally a prompt fails. Try triggering again with `process invoices` in Slack.
 
 **Slack bot not responding**
 Check that the bot is invited to the channel: `/invite @Invoice Agent`. Verify `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` in `.env`. Check `docker compose logs invoice-agent` for errors.
@@ -548,3 +524,30 @@ Some PDFs are image-only scans — `pypdf` can only extract text from text-based
 
 **MCP tools not showing in Claude Desktop**
 Restart Claude Desktop after editing the config file. Check that the absolute paths in `claude_desktop_config.json` are correct for your machine. Run `python mcp_server/server.py` manually in a terminal to check for import errors.
+
+---
+
+## Section 12 — If Things Go Wrong
+
+**Google API rate limits**
+Google's free tier allows 250 Gmail requests per second and 300 Sheets requests per minute. At any realistic invoice volume — even dozens per week — you'll never come close. If the agent somehow loops and hammers the API, Google returns a `429 Too Many Requests` error. The agent logs the error and stops processing that invoice. Your API access is not permanently affected; the quota resets daily.
+
+**Slack rate limits**
+Slack allows roughly one `chat.postMessage` per second. The agent posts at most one message per invoice, so rate limits don't apply in normal use. If you see `ratelimited` errors in the logs, wait a minute and trigger again with `process invoices`.
+
+**Kill switch — stopping a misbehaving agent**
+If the agent is doing something unexpected — looping, posting repeated Slack messages, or behaving erratically — stop it immediately:
+
+```
+docker compose stop invoice-agent
+```
+
+To fully remove the container:
+
+```
+docker compose stop invoice-agent && docker compose rm -f invoice-agent
+```
+
+This is a hard stop. No more emails will be read, no more Slack messages will be sent. Your Google Sheet, credentials, and the Ollama model are unaffected. To restart: `docker compose up -d invoice-agent`.
+
+Note: because every write action (logging an invoice, sending an email) requires your explicit Slack approval first, a misbehaving agent can at most read your Gmail and post Slack messages on its own — it cannot modify any data without your clicks.

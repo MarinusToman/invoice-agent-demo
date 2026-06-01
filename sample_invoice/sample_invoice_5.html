@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice INV-2026-0204 — Peak Digital Marketing</title>
+  <style>
+    .print-instructions {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 6px;
+      padding: 14px 20px;
+      margin-bottom: 30px;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+    .print-instructions strong { color: #856404; }
+    @media print { .print-instructions { display: none; } }
+
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; max-width: 760px; margin: 0 auto; padding: 40px; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+    .company-name { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+    .company-details { font-size: 13px; color: #555; line-height: 1.6; }
+    .invoice-title { text-align: right; }
+    .invoice-title h1 { font-size: 36px; font-weight: 300; color: #1a1a2e; margin: 0; }
+    .invoice-title .invoice-number { font-size: 14px; color: #888; margin-top: 4px; }
+    .invoice-meta { display: flex; justify-content: space-between; margin-bottom: 32px; }
+    .bill-to h3, .invoice-dates h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin: 0 0 8px; }
+    .bill-to p, .invoice-dates p { margin: 0; font-size: 14px; line-height: 1.7; }
+    .invoice-dates { text-align: right; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    thead th { background: #1a1a2e; color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    tbody tr:nth-child(even) { background: #f7f8fc; }
+    tbody td { padding: 10px 14px; font-size: 14px; border-bottom: 1px solid #e8e8e8; }
+    .text-right { text-align: right; }
+    .totals { margin-left: auto; width: 280px; }
+    .totals tr td { padding: 6px 14px; font-size: 14px; }
+    .totals tr.total-row { border-top: 2px solid #1a1a2e; }
+    .totals tr.total-row td { font-weight: 700; font-size: 16px; padding-top: 10px; }
+    .totals thead { display: none; }
+    .payment-terms { background: #f0f4ff; border-left: 4px solid #1a1a2e; padding: 14px 18px; font-size: 13px; color: #444; margin-top: 20px; }
+    .footer { margin-top: 40px; font-size: 12px; color: #aaa; text-align: center; border-top: 1px solid #e8e8e8; padding-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <div class="print-instructions">
+    <strong>Test scenario: Large amount, not urgent</strong> — Agent should propose log_invoice and send_approval_request (amount $7,800 exceeds $5,000 threshold, but due date 2026-06-30 is not within 7 days).<br><br>
+    <strong>📋 How to use:</strong> Open in browser &rarr; <strong>File &rarr; Print</strong> (Ctrl/Cmd+P) &rarr; set destination to <strong>"Save as PDF"</strong> &rarr; attach to email &rarr; send to your test Gmail.
+  </div>
+
+  <div class="header">
+    <div>
+      <div class="company-name">Peak Digital Marketing LLC</div>
+      <div class="company-details">
+        250 Fifth Avenue, Suite 1100<br>
+        New York, NY 10001<br>
+        United States<br>
+        finance@peakdigital.com<br>
+        +1 (212) 555-0654
+      </div>
+    </div>
+    <div class="invoice-title">
+      <h1>INVOICE</h1>
+      <div class="invoice-number">INV-2026-0204</div>
+    </div>
+  </div>
+
+  <div class="invoice-meta">
+    <div class="bill-to">
+      <h3>Bill To</h3>
+      <p>
+        <strong>Your Business Ltd.</strong><br>
+        Accounts Payable<br>
+        123 Main Street<br>
+        New York, NY 10001
+      </p>
+    </div>
+    <div class="invoice-dates">
+      <h3>Invoice Details</h3>
+      <p>
+        <strong>Invoice Date:</strong> 2026-05-20<br>
+        <strong>Payment Terms:</strong> Net 30 (EOM)<br>
+        <strong>Due Date:</strong> 2026-06-30
+      </p>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Description</th>
+        <th>Qty</th>
+        <th class="text-right">Unit Price</th>
+        <th class="text-right">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>SEO Campaign Management — Q2 2026 (May)</td>
+        <td>1</td>
+        <td class="text-right">$2,800.00</td>
+        <td class="text-right">$2,800.00</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Paid Search (Google Ads) Management Fee</td>
+        <td>1</td>
+        <td class="text-right">$1,500.00</td>
+        <td class="text-right">$1,500.00</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Social Media Content Creation (20 posts)</td>
+        <td>1</td>
+        <td class="text-right">$2,000.00</td>
+        <td class="text-right">$2,000.00</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Monthly Performance Report & Strategy Session</td>
+        <td>1</td>
+        <td class="text-right">$1,500.00</td>
+        <td class="text-right">$1,500.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="totals">
+    <thead><tr><th></th><th></th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Subtotal</td>
+        <td class="text-right">$7,800.00</td>
+      </tr>
+      <tr>
+        <td>Tax (0%)</td>
+        <td class="text-right">$0.00</td>
+      </tr>
+      <tr class="total-row">
+        <td>Total Due</td>
+        <td class="text-right">$7,800.00 USD</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="payment-terms">
+    <strong>Payment Instructions:</strong> Payment due by 2026-06-30 (end of month).
+    Bank transfer: Chase Business | Account: 5512-003-947 | Routing: 021000021.
+    Reference: INV-2026-0204.
+  </div>
+
+  <div class="footer">
+    Thank you for your business! &nbsp;|&nbsp; Peak Digital Marketing LLC &nbsp;|&nbsp; finance@peakdigital.com
+  </div>
+
+</body>
+</html>

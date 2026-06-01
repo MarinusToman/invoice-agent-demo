@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     environment:
       - OLLAMA_HOST=http://ollama:11434
-    command: pull qwen3:8b
+    command: pull qwen2.5-coder:7b
     networks:
       - agent_network
     restart: "no"
@@ -30,7 +30,7 @@ services:
     build: ./agent
     restart: unless-stopped
     volumes:
-      - ./credentials:/app/credentials:ro    # Read-only — agent cannot modify credentials
+      - ./credentials:/app/credentials       # OAuth token needs write access for token refresh
       - agent_logs:/app/logs
     env_file: .env
     environment:
